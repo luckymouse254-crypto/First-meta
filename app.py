@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 import os
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 @app.route('/')
 def home():
@@ -10,7 +10,8 @@ def home():
     <head><title>First Meta</title>
     <style>
       body{background:#0a0a0a;color:white;font-family:sans-serif;text-align:center;padding:80px 20px}
-      h1{font-size:42px} a{color:#00ff88;text-decoration:none;border:1px solid #00ff88;padding:12px 24px;border-radius:8px;display:inline-block;margin-top:20px}
+      h1{font-size:42px} 
+      a{color:#00ff88;text-decoration:none;border:1px solid #00ff88;padding:12px 24px;border-radius:8px;display:inline-block;margin-top:20px}
     </style>
     </head>
     <body>
@@ -33,6 +34,3 @@ def api():
         "status": "live",
         "location": "Kisumu, KE"
     })
-
-# Vercel needs this
-# app variable is exported automatically
