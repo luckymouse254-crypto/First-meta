@@ -1,4 +1,4 @@
-"""
+ """
 First Meta v0.2.0 - SUPER SMART with FREE APIs
 Built by Andrea in Kisumu, Kenya - Aug 2026
 Supports: Groq (FREE, fastest) + Gemini (FREE, Google) - No OpenAI payment!
