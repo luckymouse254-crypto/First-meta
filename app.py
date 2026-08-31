@@ -1,23 +1,12 @@
 """
-First Meta v0.2.1 - FIXED + SMART with FREE Groq
-Built by Andrea in Kisumu - Aug 31 2026
-FIX: No more 500 error! Works even without key!
-
-Install: pip install fastapi uvicorn httpx
+First Meta v0.2.2 - FIXED MODEL NAME
+Groq changed model names - use new one!
 """
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-import os
+import os, httpx
 
-# Try import httpx, if not available use fallback
-try:
-    import httpx
-    HAS_HTTPX = True
-except:
-    HAS_HTTPX = False
-    print("httpx not installed, will use fallback")
-
-app = FastAPI(title="First Meta", version="0.2.1")
+app = FastAPI(title="First Meta", version="0.2.2")
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,75 +15,67 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-SYSTEM_PROMPT = "You are First Meta built by Andrea from Kisumu, Kenya. Be friendly, helpful like Meta AI."
+SYSTEM_PROMPT = "You are First Meta built by Andrea from Kisumu, Kenya. Be friendly, helpful, smart like Meta AI. Proud of Kenya."
 
 @app.get("/")
 def home():
     return {
         "name": "First Meta",
-        "version": "0.2.1 SMART - FIXED",
+        "version": "0.2.2 SMART - MODEL FIXED",
         "builder": "Andrea Kisumu",
-        "status": "online - no more 500 error!",
-        "endpoints": ["/chat", "/docs"],
-        "has_groq_key": bool(os.getenv("GROQ_API_KEY")),
-        "has_httpx": HAS_HTTPX
+        "status": "online",
+        "groq_key_set": bool(os.getenv("GROQ_API_KEY")),
+        "model": "llama-3.3-70b-versatile (free, latest)"
     }
 
 @app.get("/chat")
-async def chat_get(message: str = Query("Hello"), user_id: str = Query("andrea")):
-    return await do_chat(message, user_id)
-
 @app.post("/chat")
-async def chat_post(message: str = Query("Hello"), user_id: str = Query("andrea")):
-    return await do_chat(message, user_id)
-
-async def do_chat(user_msg: str, user_id: str):
+async def chat(message: str = Query("Hello"), user_id: str = Query("andrea")):
     groq_key = os.getenv("GROQ_API_KEY")
     
-    # If no key or no httpx, give helpful message (NOT 500 error)
     if not groq_key:
         return {
-            "reply": f"Hi {user_id}! First Meta v0.2.1 is LIVE! 🚀 I need FREE brain key. Add GROQ_API_KEY in Render Environment. Get free at console.groq.com/keys . You said: '{user_msg}'. Once you add key, I'll be super smart like Meta AI! Built by Andrea in Kisumu.",
-            "model": "First-Meta-fallback-no-key-yet",
+            "reply": f"Hi {user_id}! First Meta v0.2.2 is LIVE! I see you didn't add GROQ_API_KEY yet. Add it in Render -> Environment. Get FREE key at console.groq.com/keys . You said: '{message}'",
             "status": "need_api_key"
         }
     
-    if not HAS_HTTPX:
-        return {
-            "reply": f"Hi {user_id}! I have your key but missing httpx library. Add 'httpx' to requirements.txt on GitHub and redeploy. You said: {user_msg}",
-            "model": "missing-httpx"
-        }
+    # Try latest Groq models (free) - in order
+    models_to_try = [
+        "llama-3.3-70b-versatile",  # NEWEST, best free
+        "llama3-8b-8192",           # Old reliable free
+        "mixtral-8x7b-32768"        # Backup
+    ]
     
-    # Try Groq FREE API
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            res = await client.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                json={
-                    "model": "llama-3.1-8b-instant",
-                    "messages": [
-                        {"role": "system", "content": SYSTEM_PROMPT},
-                        {"role": "user", "content": user_msg}
-                    ],
-                    "temperature": 0.7,
-                    "max_tokens": 600
-                }
-            )
-            if res.status_code != 200:
-                return {"reply": f"Groq error {res.status_code}: {res.text[:200]}. Check your key is correct gsk_... format. You said: {user_msg}", "model": "groq-error"}
-            
-            data = res.json()
-            answer = data["choices"][0]["message"]["content"]
-            return {"reply": answer, "model": "groq-llama-3.1-8b-instant-free", "user_id": user_id, "builder": "Andrea"}
-    except Exception as e:
-        # NEVER return 500, always return helpful json
-        return {
-            "reply": f"Oops error: {str(e)[:200]}. You said: '{user_msg}'. First Meta is still learning! Try again. (Builder: Andrea Kisumu)",
-            "model": "error-handled",
-            "error": str(e)[:300]
-        }
+    for model_name in models_to_try:
+        try:
+            async with httpx.AsyncClient(timeout=30) as client:
+                res = await client.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                    json={
+                        "model": model_name,
+                        "messages": [
+                            {"role": "system", "content": SYSTEM_PROMPT},
+                            {"role": "user", "content": message}
+                        ],
+                        "temperature": 0.7,
+                        "max_tokens": 700
+                    }
+                )
+                if res.status_code == 200:
+                    data = res.json()
+                    answer = data["choices"][0]["message"]["content"]
+                    return {"reply": answer, "model": model_name, "user_id": user_id, "builder": "Andrea Kisumu"}
+                # if model not found, try next model
+                if "model_not_found" in res.text or "does not exist" in res.text:
+                    continue
+                else:
+                    return {"reply": f"Groq error with {model_name}: {res.text[:300]}", "model": model_name}
+        except Exception as e:
+            continue
+    
+    return {"reply": f"All Groq models failed. Check your key gsk_... is valid. Error: {str(e)[:200]}. You said: {message}", "status": "all_models_failed"}
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "0.2.1", "groq_ready": bool(os.getenv("GROQ_API_KEY"))}
+    return {"status": "ok", "version": "0.2.2", "groq_ready": bool(os.getenv("GROQ_API_KEY"))}
