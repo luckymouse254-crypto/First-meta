@@ -6,52 +6,60 @@
 <title>First Meta by Andrea</title>
 <style>
 body{background:#212121;color:white;font-family:sans-serif;display:flex;flex-direction:column;height:100vh;margin:0}
+.top{padding:10px 14px;background:#171717;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}
+.keybtn{background:#19c37d;color:white;border:none;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:bold;cursor:pointer}
 #chat{flex:1;overflow:auto;padding:20px;padding-bottom:100px}
 .bubble{margin:10px 0;padding:12px;border-radius:12px;max-width:90%;white-space:pre-wrap;word-break:break-word;line-height:1.5}
 .user{background:#2f2f2f;align-self:flex-end;margin-left:40px}
 .bot{background:#444;align-self:flex-start;margin-right:40px}
 .bar{position:fixed;bottom:0;left:0;right:0;background:#171717;padding:10px;display:flex;gap:8px;border-top:1px solid #333}
 input{flex:1;padding:12px;border-radius:20px;border:none;background:#2f2f2f;color:white;outline:none}
-button{padding:12px 18px;border-radius:20px;border:none;background:#19c37d;color:white;font-weight:bold;cursor:pointer}
+button.send{padding:12px 18px;border-radius:20px;border:none;background:#19c37d;color:white;font-weight:bold;cursor:pointer}
 #setup{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
 .box{background:#2f2f2f;padding:20px;border-radius:16px;width:100%;max-width:350px;text-align:center}
 .box input{width:100%;margin:12px 0;padding:14px;box-sizing:border-box;border-radius:10px;border:1px solid #555;background:#171717;color:white}
 </style>
 </head>
 <body>
+<div class="top">
+<b>First Meta 🇰🇪</b>
+<button class="keybtn" onclick="document.getElementById('setup').style.display='flex'">🔑 Set API Key</button>
+</div>
+
 <div id="setup">
 <div class="box">
-<h3>🔑 Activate Brain</h3>
-<p style="font-size:13px;color:#aaa">Paste your Groq API key<br>Get FREE at console.groq.com</p>
+<h3>🔑 Paste Groq Key</h3>
+<p style="font-size:13px;color:#aaa">Get FREE at console.groq.com → API Keys</p>
 <input id="keyIn" placeholder="gsk_...">
-<button onclick="save()">Activate 🧠</button>
-<p style="font-size:10px;color:#666;margin-top:8px">Your key stays in your laptop only</p>
+<button class="send" style="width:100%" onclick="save()">Save & Activate 🧠</button>
+<button class="send" style="width:100%;background:#333;margin-top:8px" onclick="clearKey()">Clear Old Key</button>
 </div>
 </div>
-<div id="chat">
-<div class="bubble bot">Hello Andrea! 👋 I am First Meta from Kisumu! 🇰🇪
 
-I auto-detect best Groq model. Paste key to start!</div>
+<div id="chat">
+<div class="bubble bot">Hello Andrea! I am First Meta! Click TOP RIGHT "Set API Key" to paste your key!</div>
 </div>
+
 <div class="bar">
 <input id="msg" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')send()">
-<button onclick="send()">Send</button>
+<button class="send" onclick="send()">Send</button>
 </div>
+
 <script>
 let key = localStorage.getItem('groq_key') || '';
-let msgs = [{role:'system',content:'You are First Meta, built by Andrea from Kisumu Kenya. Be helpful, fast, friendly.'}];
+let msgs = [{role:'system',content:'You are First Meta, built by Andrea Kisumu Kenya. Helpful.'}];
 if(key) document.getElementById('setup').style.display='none';
 function save(){
  let k=document.getElementById('keyIn').value.trim();
- if(!k.startsWith('gsk_')){ alert('Key must start with gsk_'); return; }
+ if(!k.startsWith('gsk_')){ alert('Must start gsk_'); return; }
  localStorage.setItem('groq_key',k); key=k;
  document.getElementById('setup').style.display='none';
- add('bot','🧠 BRAIN ACTIVE! Type hey!');
+ add('bot','🧠 BRAIN ACTIVE! Now type hey!');
 }
+function clearKey(){ localStorage.removeItem('groq_key'); key=''; document.getElementById('keyIn').value=''; alert('Old key cleared! Paste new one now.'); }
 function add(role,t){
  let d=document.createElement('div'); d.className='bubble '+role; d.textContent=t;
- let c=document.getElementById('chat'); c.appendChild(d); c.scrollTop=999999;
- return d;
+ let c=document.getElementById('chat'); c.appendChild(d); c.scrollTop=999999; return d;
 }
 async function send(){
  let q=document.getElementById('msg').value.trim(); if(!q)return;
@@ -59,17 +67,15 @@ async function send(){
  add('user',q); document.getElementById('msg').value='';
  msgs.push({role:'user',content:q});
  let b=add('bot','Thinking...');
- let models=['llama-3.3-70b-versatile','openai/gpt-oss-20b','openai/gpt-oss-120b','gemma2-9b-it','llama3-8b-8192','mixtral-8x7b-32768'];
- let ok=false;
+ let models=['llama-3.3-70b-versatile','openai/gpt-oss-20b','llama3-8b-8192'];
  for(let m of models){
   try{
    let r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model:m,messages:msgs,max_tokens:800})});
    let d=await r.json();
-   if(d.choices && d.choices[0]){ b.textContent=d.choices[0].message.content; msgs.push({role:'assistant',content:d.choices[0].message.content}); ok=true; break; }
-   else { console.log(m, d.error?.message); }
-  }catch(e){ console.log(m,e); }
+   if(d.choices){ b.textContent=d.choices[0].message.content; msgs.push({role:'assistant',content:d.choices[0].message.content}); return; }
+  }catch(e){}
  }
- if(!ok) b.textContent='Still error! Go to console.groq.com → make NEW key (delete old leaked one) → verify email → paste new key.\n\nIf still fails, your Groq account needs email verification. Check your email inbox for Groq.';
+ b.textContent='Error! Delete old key at console.groq.com → Create NEW one → Clear Old Key button → Paste NEW key.';
 }
 </script>
 </body>
