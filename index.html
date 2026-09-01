@@ -22,35 +22,28 @@ button{padding:12px 18px;border-radius:20px;border:none;background:#19c37d;color
 <div id="setup">
 <div class="box">
 <h3>🔑 Activate Brain</h3>
-<p style="font-size:13px;color:#aaa">Paste your Groq key<br>Get FREE at console.groq.com</p>
+<p style="font-size:13px;color:#aaa">Paste Groq key from console.groq.com</p>
 <input id="keyIn" placeholder="gsk_... paste here">
 <button onclick="save()">Activate 🧠</button>
-<p style="font-size:10px;color:#666;margin-top:10px">Saved only in your phone</p>
 </div>
 </div>
-
 <div id="chat">
-<div class="bubble bot">Hello Andrea! 👋 I am First Meta from Kisumu! 🇰🇪
-
-Paste your key above to activate me!</div>
+<div class="bubble bot">Hello Andrea! 👋 I am First Meta from Kisumu! 🇰🇪 Paste key above!</div>
 </div>
-
 <div class="bar">
-<input id="msg" placeholder="Type message..." onkeydown="if(event.key==='Enter')send()">
+<input id="msg" placeholder="Type..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">Send</button>
 </div>
-
 <script>
 let key = localStorage.getItem('groq_key') || '';
-let msgs = [{role:'system',content:'You are First Meta built by Andrea from Kisumu Kenya. Be helpful, friendly, speak English/Swahili/Sheng. Keep answers short and powerful.'}];
+let msgs = [{role:'system',content:'You are First Meta built by Andrea Kisumu from Kenya. Be helpful, friendly.'}];
 if(key){ document.getElementById('setup').style.display='none'; }
-
 function save(){
  let k=document.getElementById('keyIn').value.trim();
- if(!k.startsWith('gsk_')){ alert('Key must start with gsk_'); return; }
+ if(!k.startsWith('gsk_')){ alert('Must start with gsk_'); return; }
  localStorage.setItem('groq_key',k); key=k;
  document.getElementById('setup').style.display='none';
- add('bot','🧠 BRAIN ACTIVE! Ask me anything Andrea! 🚀');
+ add('bot','🧠 BRAIN ACTIVE! Try now!');
 }
 function add(role,t){
  let d=document.createElement('div'); d.className='bubble '+role; d.textContent=t;
@@ -58,18 +51,32 @@ function add(role,t){
  document.getElementById('chat').scrollTop=999999;
  return d;
 }
+async function tryModel(model, messages, apiKey){
+ let r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({model:model,messages:messages})});
+ return r.json();
+}
 async function send(){
  let q=document.getElementById('msg').value.trim(); if(!q)return;
  if(!key){ document.getElementById('setup').style.display='flex'; return; }
  add('user',q); document.getElementById('msg').value='';
  msgs.push({role:'user',content:q});
  let b=add('bot','Thinking...');
- try{
-  let r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model:'llama-3.1-8b-instant',messages:msgs})});
-  let d=await r.json();
-  if(d.error){ b.textContent='Error: '+d.error.message; }
-  else { b.textContent=d.choices[0].message.content; msgs.push({role:'assistant',content:d.choices[0].message.content}); }
- }catch(e){ b.textContent='Network error: '+e.message; }
+ let models=['llama3-8b-8192','mixtral-8x7b-32768','gemma2-9b-it','llama-3.1-8b-instant'];
+ let answered=false;
+ for(let m of models){
+   try{
+     let d=await tryModel(m,msgs,key);
+     if(!d.error && d.choices){
+       b.textContent=d.choices[0].message.content;
+       msgs.push({role:'assistant',content:d.choices[0].message.content});
+       answered=true; break;
+     } else if(d.error){
+       console.log(m+' failed: '+d.error.message);
+       if(m===models[models.length-1]) b.textContent='Error: '+d.error.message+'\nTry new key at console.groq.com';
+     }
+   }catch(e){ console.log(e); }
+ }
+ if(!answered && b.textContent==='Thinking...') b.textContent='All models busy, try again in 5 seconds.';
 }
 </script>
 </body>
