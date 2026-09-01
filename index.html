@@ -3,149 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>First Meta — Built by Andrea from Kisumu, Kenya</title>
-<meta name="description" content="First Meta - ChatGPT-level AI built by Andrea from Kisumu, Kenya 🇰🇪">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇰🇪</text></svg>">
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>First Meta - Andrea Kisumu</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  *{font-family:'Inter',sans-serif}
-  .glass{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-  @keyframes typing{0%,80%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-4px);opacity:1}}
-  .dot{animation:typing 1.2s infinite}
-  .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Segoe UI, system-ui; background:#212121; color:#ececec; height:100vh; display:flex; overflow:hidden}
+.sidebar{width:260px; background:#171717; display:flex; flex-direction:column; padding:10px; border-right:1px solid #2f2f2f}
+@media(max-width:768px){.sidebar{display:none}}
+.logo{padding:14px 10px; font-weight:600; display:flex; align-items:center; gap:10px; border-bottom:1px solid #2f2f2f; margin-bottom:10px}
+.new-chat{background:#2f2f2f; padding:12px; border-radius:8px; cursor:pointer; display:flex; gap:10px; align-items:center; margin-bottom:15px; font-size:14px}
+.new-chat:hover{background:#3f3f3f}
+.history{flex:1; overflow:auto; font-size:13px; color:#9e9e9e}
+.history div{padding:10px; border-radius:8px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.history div:hover{background:#2f2f2f; color:#fff}
+.bottom{border-top:1px solid #2f2f2f; padding:10px; font-size:12px; color:#8e8e8e}
+.main{flex:1; display:flex; flex-direction:column; position:relative; background:#212121}
+.header{padding:16px; text-align:center; font-weight:600; border-bottom:1px solid #2f2f2f}
+#chat{flex:1; overflow:auto; padding:20px 0 120px 0}
+.msg-wrap{width:100%; padding:20px 0; display:flex; justify-content:center}
+.msg-wrap.bot{background:rgba(47,47,47,0.2)}
+.msg{width:100%; max-width:760px; display:flex; gap:20px; padding:0 20px}
+.avatar{width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px}
+.user .avatar{background:#19c37d}
+.bot .avatar{background:#ab68ff}
+.text{flex:1; line-height:1.7; font-size:15px; white-space:pre-wrap; word-break:break-word}
+.input-area{position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(transparent, #212121 50%); display:flex; justify-content:center}
+.input-box{width:100%; max-width:760px; background:#2f2f2f; border-radius:24px; display:flex; align-items:center; padding:8px 12px; border:1px solid #444}
+input{flex:1; background:transparent; border:none; outline:none; color:white; padding:10px; font-size:16px}
+button.send{width:32px; height:32px; border-radius:50%; border:none; background:white; color:black; display:flex; align-items:center; justify-content:center; cursor:pointer}
+.footer-note{text-align:center; font-size:11px; color:#8e8e8e; padding:8px}
 </style>
 </head>
-<body class="bg-[#0a0a0a] text-white h-screen flex flex-col overflow-hidden">
-
-<!-- Header -->
-<header class="h-[56px] border-b border-white/10 flex items-center justify-between px-4 md:px-6 bg-[#0a0a0a]/80 glass sticky top-0 z-20">
-  <div class="flex items-center gap-3">
-    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00FF85] to-[#007AFF] flex items-center justify-center font-bold text-black text-[14px]">FM</div>
-    <div>
-      <div class="font-semibold text-[15px] leading-none flex items-center gap-2">First Meta <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/10 border border-white/10 font-medium">0.2.3</span></div>
-      <div class="text-[11px] text-white/50 flex items-center gap-1 mt-0.5">● Online • Built by Andrea Kisumu 🇰🇪</div>
-    </div>
-  </div>
-  <div class="flex items-center gap-2">
-    <a href="https://first-meta.onrender.com/docs" target="_blank" class="hidden md:flex text-[12px] px-3 py-1.5 rounded-full bg-white text-black font-medium hover:bg-white/90 transition">API Docs</a>
-    <button onclick="newChat()" class="text-[12px] px-3 py-1.5 rounded-full border border-white/15 hover:bg-white/10 transition">+ New Chat</button>
-  </div>
-</header>
-
-<div class="flex flex-1 overflow-hidden">
-  <!-- Sidebar Desktop -->
-  <aside class="hidden md:flex w-[260px] border-r border-white/10 bg-[#111] flex-col p-3 gap-3">
-    <button onclick="newChat()" class="w-full h-9 rounded-lg bg-white text-black text-[13px] font-medium flex items-center justify-center gap-2 hover:bg-white/90">+ New chat</button>
-    <div class="text-[11px] text-white/30 uppercase tracking-widest px-2 mt-2">Suggestions</div>
-    <div class="flex flex-col gap-1.5">
-      <button onclick="ask('Write a Swahili love song about Lake Victoria, Kisumu')" class="text-left text-[13px] px-3 py-2.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition">🎵 Swahili song about Lake Victoria</button>
-      <button onclick="ask('Who built you and where are you from?')" class="text-left text-[13px] px-3 py-2.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition">👋 Who built you?</button>
-      <button onclick="ask('Explain AI like I am 10 years old, with Kenyan examples')" class="text-left text-[13px] px-3 py-2.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition">🧠 Explain AI simply</button>
-      <button onclick="ask('Give me 5 business ideas for Kisumu with 10k KES')" class="text-left text-[13px] px-3 py-2.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition">💡 Business ideas for Kisumu</button>
-    </div>
-    <div class="mt-auto p-3 rounded-xl bg-gradient-to-br from-[#00FF85]/15 to-[#007AFF]/15 border border-white/10">
-      <div class="text-[13px] font-semibold">From Kisumu to the World 🌍</div>
-      <div class="text-[11px] text-white/60 mt-1">First Meta v0.2.3 — Built with ❤️ by Andrea. Fast, free, Kenyan-made AI.</div>
-    </div>
-  </aside>
-
-  <!-- Chat -->
-  <main class="flex-1 flex flex-col bg-[#0a0a0a] relative">
-    <div id="messages" class="flex-1 overflow-y-auto px-4 md:px-0 scrollbar-thin">
-      <div class="max-w-[760px] mx-auto w-full py-6 md:py-10 flex flex-col gap-6" id="chatList">
-        <!-- Welcome -->
-        <div class="flex gap-3">
-          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#00FF85] to-[#007AFF] flex-shrink-0 flex items-center justify-center text-[12px] font-bold text-black">FM</div>
-          <div class="flex-1">
-            <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl rounded-tl-[6px] px-4 py-3 text-[14px] leading-[1.6] max-w-[90%] md:max-w-[85%]">
-              Hello! 👋 It's great to meet you. I'm <b>First Meta</b>, built by <b>Andrea all the way from Kisumu, Kenya</b> 🇰🇪🌊.<br><br>I'm as smart as ChatGPT, fast, and proudly Kenyan-made. How can I help you today? 🌍
-              <div class="mt-3 flex flex-wrap gap-2 md:hidden">
-                <button onclick="ask('Who built you?')" class="text-[11px] px-2.5 py-1 rounded-full bg-white/10 border border-white/10">Who built you?</button>
-                <button onclick="ask('Write a Swahili song')" class="text-[11px] px-2.5 py-1 rounded-full bg-white/10 border border-white/10">Swahili song</button>
-              </div>
-            </div>
-            <div class="text-[10px] text-white/30 mt-1.5 ml-1">openai/gpt-oss-120b • Andrea Kisumu</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Input -->
-    <div class="border-t border-white/10 bg-[#0a0a0a] p-3 md:p-4">
-      <div class="max-w-[760px] mx-auto">
-        <div class="relative bg-[#1a1a1a] border border-white/15 rounded-[24px] flex items-end gap-2 px-3 py-2 focus-within:border-white/25 transition">
-          <textarea id="input" rows="1" placeholder="Message First Meta..." class="flex-1 bg-transparent resize-none outline-none text-[15px] py-2.5 max-h-[160px] placeholder:text-white/40"></textarea>
-          <button id="send" class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition flex-shrink-0 mb-1">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-          </button>
-        </div>
-        <div class="text-center text-[10px] text-white/30 mt-2.5">First Meta can make mistakes. Built with ❤️ in Kisumu, Kenya by Andrea • <span id="modelBadge">gpt-oss-120b</span></div>
-      </div>
-    </div>
-  </main>
+<body>
+<div class="sidebar">
+<div class="logo"><i class="fa-solid fa-bolt"></i> First Meta</div>
+<div class="new-chat" onclick="newChat()"><i class="fa-regular fa-pen-to-square"></i> New chat</div>
+<div class="history" id="history">
+<div>What is First Meta?</div>
+<div>Build my AI app</div>
 </div>
+<div class="bottom">
+<i class="fa-solid fa-circle-user"></i> Andrea Kisumu<br>
+<small>Kisumu, KE • v2.5 LIVE</small>
+</div>
+</div>
+<div class="main">
+<div class="header">First Meta • ChatGPT Style</div>
+<div id="chat">
+<div class="msg-wrap bot">
+<div class="msg">
+<div class="avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+<div class="text">Hello Andrea! 👋
 
+I am First Meta — your AI built in Kisumu.
+
+I am now LIVE! Ask me anything! 🚀
+
+Tip: I work offline now. Later add Groq API to make me super smart.</div>
+</div>
+</div>
+</div>
+<div class="input-area">
+<div style="width:100%; max-width:760px">
+<div class="input-box">
+<input id="input" placeholder="Message First Meta..." autocomplete="off">
+<button class="send" onclick="sendMessage()"><i class="fa-solid fa-arrow-up"></i></button>
+</div>
+<div class="footer-note">First Meta can make mistakes. Built by Andrea Kisumu in Kisumu.</div>
+</div>
+</div>
+</div>
 <script>
-const API = "https://first-meta.onrender.com/chat";
-const chatList = document.getElementById('chatList');
-const messages = document.getElementById('messages');
+const chat = document.getElementById('chat');
 const input = document.getElementById('input');
-const send = document.getElementById('send');
-
-function scrollBottom(){ messages.scrollTop = messages.scrollHeight; }
-
-function addMsg(role, text, model){
-  const wrap = document.createElement('div');
-  wrap.className = role==='user' ? 'flex gap-3 justify-end' : 'flex gap-3';
-  if(role==='user'){
-    wrap.innerHTML = `<div class="flex-1 flex justify-end"><div class="bg-white text-black rounded-2xl rounded-tr-[6px] px-4 py-3 text-[14px] leading-[1.6] max-w-[85%]">${escapeHtml(text)}</div></div>`;
-  }else{
-    wrap.innerHTML = `<div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#00FF85] to-[#007AFF] flex-shrink-0 flex items-center justify-center text-[12px] font-bold text-black">FM</div><div class="flex-1"><div class="bg-[#1a1a1a] border border-white/10 rounded-2xl rounded-tl-[6px] px-4 py-3 text-[14px] leading-[1.6] max-w-[90%] md:max-w-[85%] whitespace-pre-wrap">${escapeHtml(text)}</div>${model?`<div class="text-[10px] text-white/30 mt-1.5 ml-1">${model} • Andrea Kisumu</div>`:''}</div>`;
-  }
-  chatList.appendChild(wrap);
-  scrollBottom();
-  return wrap;
+const history = document.getElementById('history');
+function addMessage(role, text){
+ const wrap = document.createElement('div');
+ wrap.className = msg-wrap ${role};
+ wrap.innerHTML = <div class="msg"><div class="avatar">${role==='user' ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-wand-magic-sparkles"></i>'}</div><div class="text">${text}</div></div>;
+ chat.appendChild(wrap);
+ chat.scrollTop = chat.scrollHeight;
 }
-
-function addTyping(){
-  const el = document.createElement('div');
-  el.id='typing';
-  el.className='flex gap-3';
-  el.innerHTML=`<div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#00FF85] to-[#007AFF] flex-shrink-0 flex items-center justify-center text-[12px] font-bold text-black">FM</div><div class="bg-[#1a1a1a] border border-white/10 rounded-2xl rounded-tl-[6px] px-4 py-3 flex gap-1 items-center"><span class="w-1.5 h-1.5 rounded-full bg-white/60 dot"></span><span class="w-1.5 h-1.5 rounded-full bg-white/60 dot"></span><span class="w-1.5 h-1.5 rounded-full bg-white/60 dot"></span></div>`;
-  chatList.appendChild(el);
-  scrollBottom();
+function sendMessage(){
+ const q = input.value.trim();
+ if(!q) return;
+ addMessage('user', q);
+ const h = document.createElement('div');
+ h.textContent = q.substring(0,30);
+ history.prepend(h);
+ input.value='';
+ setTimeout(()=>{
+  let reply = "";
+  if(q.toLowerCase().includes("who are you")) reply = "I am First Meta — AI built by Andrea Kisumu from Kisumu, Kenya. Fast, helpful, African-made! 🌍";
+  else if(q.toLowerCase().includes("kisumu")) reply = "Kisumu! Lake Victoria city! Home of First Meta builder Andrea Kisumu. Dala! 🚀";
+  else reply = You said: "${q}"\n\n✅ First Meta is WORKING! This is the ChatGPT UI you wanted.\n\nNext: Connect Groq API to make me real AI.;
+  addMessage('bot', reply);
+ }, 600);
 }
-
-function escapeHtml(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-async function sendMsg(text){
-  if(!text.trim()) return;
-  addMsg('user', text);
-  input.value=''; autoResize(); send.disabled=true;
-  addTyping();
-  try{
-    const res = await fetch(`${API}?message=${encodeURIComponent(text)}&user_id=andrea`, {method:'POST'});
-    const data = await res.json();
-    document.getElementById('typing')?.remove();
-    addMsg('assistant', data.reply || "Oops, no reply", data.model);
-    document.getElementById('modelBadge').textContent = data.model || 'gpt-oss-120b';
-  }catch(e){
-    document.getElementById('typing')?.remove();
-    addMsg('assistant', "⚠️ Connection failed — Render may be waking up (wait 30s and try again). Your API is on free tier, it sleeps after 15min. Error: "+e.message);
-  }
-  send.disabled=false; input.focus();
+function newChat(){
+ chat.innerHTML = <div class="msg-wrap bot"><div class="msg"><div class="avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div class="text">New chat started! How can I help today? 🚀</div></div></div>;
 }
-
-function ask(t){ sendMsg(t); }
-function newChat(){ chatList.innerHTML=''; addMsg('assistant', "New chat started! 👋 I'm First Meta from Kisumu 🇰🇪 How can I help?", "gpt-oss-120b"); }
-
-function autoResize(){ input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,160)+'px'; }
-
-input.addEventListener('input', autoResize);
-input.addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(input.value); } });
-send.addEventListener('click', ()=> sendMsg(input.value));
-autoResize();
+input.addEventListener('keydown', e=>{ if(e.key==='Enter') sendMessage() });
 </script>
 </body>
 </html>
