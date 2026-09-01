@@ -12,10 +12,8 @@ body{font-family:Segoe UI, system-ui; background:#212121; color:#ececec; height:
 @media(max-width:768px){.sidebar{display:none}}
 .logo{padding:14px 10px; font-weight:600; display:flex; align-items:center; gap:10px; border-bottom:1px solid #2f2f2f; margin-bottom:10px}
 .new-chat{background:#2f2f2f; padding:12px; border-radius:8px; cursor:pointer; display:flex; gap:10px; align-items:center; margin-bottom:15px; font-size:14px}
-.new-chat:hover{background:#3f3f3f}
 .history{flex:1; overflow:auto; font-size:13px; color:#9e9e9e}
-.history div{padding:10px; border-radius:8px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.history div:hover{background:#2f2f2f; color:#fff}
+.history div{padding:10px; border-radius:8px}
 .bottom{border-top:1px solid #2f2f2f; padding:10px; font-size:12px; color:#8e8e8e}
 .main{flex:1; display:flex; flex-direction:column; position:relative; background:#212121}
 .header{padding:16px; text-align:center; font-weight:600; border-bottom:1px solid #2f2f2f}
@@ -23,14 +21,14 @@ body{font-family:Segoe UI, system-ui; background:#212121; color:#ececec; height:
 .msg-wrap{width:100%; padding:20px 0; display:flex; justify-content:center}
 .msg-wrap.bot{background:rgba(47,47,47,0.2)}
 .msg{width:100%; max-width:760px; display:flex; gap:20px; padding:0 20px}
-.avatar{width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px}
+.avatar{width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0}
 .user .avatar{background:#19c37d}
 .bot .avatar{background:#ab68ff}
 .text{flex:1; line-height:1.7; font-size:15px; white-space:pre-wrap; word-break:break-word}
 .input-area{position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(transparent, #212121 50%); display:flex; justify-content:center}
 .input-box{width:100%; max-width:760px; background:#2f2f2f; border-radius:24px; display:flex; align-items:center; padding:8px 12px; border:1px solid #444}
 input{flex:1; background:transparent; border:none; outline:none; color:white; padding:10px; font-size:16px}
-button.send{width:32px; height:32px; border-radius:50%; border:none; background:white; color:black; display:flex; align-items:center; justify-content:center; cursor:pointer}
+button.send{width:32px; height:32px; border-radius:50%; border:none; background:white; color:black; display:flex; align-items:center; justify-content:center}
 .footer-note{text-align:center; font-size:11px; color:#8e8e8e; padding:8px}
 </style>
 </head>
@@ -38,35 +36,22 @@ button.send{width:32px; height:32px; border-radius:50%; border:none; background:
 <div class="sidebar">
 <div class="logo"><i class="fa-solid fa-bolt"></i> First Meta</div>
 <div class="new-chat" onclick="newChat()"><i class="fa-regular fa-pen-to-square"></i> New chat</div>
-<div class="history" id="history">
-<div>What is First Meta?</div>
-<div>Build my AI app</div>
-</div>
-<div class="bottom">
-<i class="fa-solid fa-circle-user"></i> Andrea Kisumu<br>
-<small>Kisumu, KE • v2.5 LIVE</small>
-</div>
+<div class="history" id="history"><div>What is First Meta?</div></div>
+<div class="bottom"><i class="fa-solid fa-circle-user"></i> Andrea Kisumu<br><small>Kisumu, KE - v2.5 LIVE</small></div>
 </div>
 <div class="main">
-<div class="header">First Meta • ChatGPT Style</div>
+<div class="header">First Meta - ChatGPT Style</div>
 <div id="chat">
-<div class="msg-wrap bot">
-<div class="msg">
-<div class="avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-<div class="text">Hello Andrea! 👋
+<div class="msg-wrap bot"><div class="msg"><div class="avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div class="text">Hello Andrea! 👋
 
 I am First Meta — your AI built in Kisumu.
 
-I am now LIVE! Ask me anything! 🚀
-
-Tip: I work offline now. Later add Groq API to make me super smart.</div>
-</div>
-</div>
+I am now LIVE! Ask me anything! 🚀</div></div></div>
 </div>
 <div class="input-area">
 <div style="width:100%; max-width:760px">
 <div class="input-box">
-<input id="input" placeholder="Message First Meta..." autocomplete="off">
+<input id="input" placeholder="Message First Meta...">
 <button class="send" onclick="sendMessage()"><i class="fa-solid fa-arrow-up"></i></button>
 </div>
 <div class="footer-note">First Meta can make mistakes. Built by Andrea Kisumu in Kisumu.</div>
@@ -76,7 +61,6 @@ Tip: I work offline now. Later add Groq API to make me super smart.</div>
 <script>
 const chat = document.getElementById('chat');
 const input = document.getElementById('input');
-const history = document.getElementById('history');
 function addMessage(role, text){
  const wrap = document.createElement('div');
  wrap.className = msg-wrap ${role};
@@ -88,21 +72,10 @@ function sendMessage(){
  const q = input.value.trim();
  if(!q) return;
  addMessage('user', q);
- const h = document.createElement('div');
- h.textContent = q.substring(0,30);
- history.prepend(h);
  input.value='';
- setTimeout(()=>{
-  let reply = "";
-  if(q.toLowerCase().includes("who are you")) reply = "I am First Meta — AI built by Andrea Kisumu from Kisumu, Kenya. Fast, helpful, African-made! 🌍";
-  else if(q.toLowerCase().includes("kisumu")) reply = "Kisumu! Lake Victoria city! Home of First Meta builder Andrea Kisumu. Dala! 🚀";
-  else reply = You said: "${q}"\n\n✅ First Meta is WORKING! This is the ChatGPT UI you wanted.\n\nNext: Connect Groq API to make me real AI.;
-  addMessage('bot', reply);
- }, 600);
+ setTimeout(()=>{ addMessage('bot', You said: "${q}"\n\n✅ First Meta is WORKING! This is the ChatGPT UI you wanted.); }, 600);
 }
-function newChat(){
- chat.innerHTML = <div class="msg-wrap bot"><div class="msg"><div class="avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div class="text">New chat started! How can I help today? 🚀</div></div></div>;
-}
+function newChat(){ chat.innerHTML = <div class="msg-wrap bot"><div class="msg"><div class="avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div class="text">New chat started! How can I help today? 🚀</div></div></div>; }
 input.addEventListener('keydown', e=>{ if(e.key==='Enter') sendMessage() });
 </script>
 </body>
