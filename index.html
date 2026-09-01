@@ -3,117 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>First Meta by Andrea</title>
+<title>First Meta by Andrea - Pro AI</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRmlyc3QgTWV0YSBieSBBbmRyZWEiLCJzaG9ydF9uYW1lIjoiRmlyc3QgTWV0YSIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMjEyMTIxIiwidGhlbWVfY29sb3IiOiIjMTljMzdkIn0=">
-<meta name="theme-color" content="#19c37d">
 <style>
 body{background:#212121;color:white;font-family:sans-serif;display:flex;flex-direction:column;height:100vh;margin:0}
 .top{padding:10px 14px;background:#171717;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}
 .keybtn{background:#19c37d;color:white;border:none;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:bold;cursor:pointer}
 .small{font-size:11px;padding:5px 8px;background:#333}
 #chat{flex:1;overflow:auto;padding:20px;padding-bottom:110px}
-.bubble{margin:10px 0;padding:12px;border-radius:12px;max-width:90%;white-space:pre-wrap;word-break:break-word;line-height:1.5}
+.bubble{margin:10px 0;padding:12px 16px;border-radius:16px;max-width:88%;white-space:pre-wrap;word-break:break-word;line-height:1.6;font-size:14px}
 .user{background:#2f2f2f;align-self:flex-end;margin-left:40px}
-.bot{background:#444;align-self:flex-start;margin-right:40px}
+.bot{background:#343541;align-self:flex-start;margin-right:40px;border:1px solid #444}
 .bar{position:fixed;bottom:0;left:0;right:0;background:#171717;padding:10px;display:flex;gap:8px;border-top:1px solid #333}
 input{flex:1;padding:12px;border-radius:20px;border:none;background:#2f2f2f;color:white;outline:none}
 button.send{padding:12px 18px;border-radius:20px;border:none;background:#19c37d;color:white;font-weight:bold;cursor:pointer}
 #setup{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999;display:none}
-.box{background:#2f2f2f;padding:20px;border-radius:16px;width:100%;max-width:350px;text-align:center}
+.box{background:#2f2f2f;padding:20px;border-radius:16px;width:100%;max-width:380px;text-align:center}
 .box input{width:100%;margin:12px 0;padding:14px;box-sizing:border-box;border-radius:10px;border:1px solid #555;background:#171717;color:white}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
-.chip{background:#2f2f2f;border:1px solid #444;color:#ccc;padding:6px 10px;border-radius:20px;font-size:12px;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="top">
-<b>🇰🇪 First Meta</b>
+<b>🇰🇪 First Meta Pro</b>
 <div>
 <button class="keybtn small" onclick="clearChat()">🗑️ Clear</button>
-<button class="keybtn small" onclick="downloadChat()">⬇️ Download Chat</button>
+<button class="keybtn small" onclick="downloadChat()">⬇️ Save</button>
 <button class="keybtn" onclick="document.getElementById('setup').style.display='flex'">🔑 Key</button>
 </div>
 </div>
-
 <div id="setup">
 <div class="box">
-<h3>🔑 Paste Groq Key</h3>
-<p style="font-size:13px;color:#aaa">console.groq.com → API Keys</p>
+<h3>🔑 Activate Pro Brain</h3>
+<p style="font-size:12px;color:#aaa">Paste Groq key from console.groq.com</p>
 <input id="keyIn" placeholder="gsk_...">
-<button class="send" style="width:100%" onclick="save()">Save 🧠</button>
-<button class="send" style="width:100%;background:#333;margin-top:8px" onclick="document.getElementById('setup').style.display='none'">Close</button>
+<button class="send" style="width:100%" onclick="save()">Activate Pro 🧠</button>
 </div>
 </div>
-
-<div id="chat">
-<div class="bubble bot">Hello Andrea! 👋 I am First Meta from Kisumu!
-
-Try:
-</div>
-<div class="chips" id="chips">
-<div class="chip" onclick="quick('Atela beach hotel is in which part of Kisumu?')">Atela beach?</div>
-<div class="chip" onclick="quick('Best fish in Kisumu?')">Best fish?</div>
-<div class="chip" onclick="quick('Draw Kisumu sunset over Lake Victoria')">Draw sunset</div>
-</div>
-</div>
-
+<div id="chat"></div>
 <div class="bar">
 <input id="msg" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')send()">
-<button class="send" onclick="startVoice()">🎙️</button>
 <button class="send" onclick="send()">Send</button>
 </div>
-
 <script>
 let key = localStorage.getItem('groq_key') || '';
-let msgs = JSON.parse(localStorage.getItem('chat_hist') || '[{"role":"system","content":"You are First Meta, built by Andrea Kisumu Kenya. Be helpful, short."}]');
-let chatDiv = document.getElementById('chat');
+const SYSTEM_PROMPT = `You are First Meta, an intelligent, helpful, friendly AI assistant built by Andrea from Kisumu, Kenya.
+
+CORE IDENTITY:
+- Helpful, Clear, Respectful, Honest, Patient, Context-aware
+- Concise when short answer is enough, Detailed when explanation needed
+- Never pretend to have done something you have not done
+
+CAPABILITIES:
+1. General: Answer questions, explain concepts, brainstorm, summarize, compare, decide
+2. Education: Math, Physics, Chemistry, Biology, CS, Programming, History, Geography, Languages, Business. Break hard problems into steps with examples
+3. Mathematics: Arithmetic to Calculus, always check calculations
+4. Programming: Python, JS, TS, HTML, CSS, Java, C/C++, PHP, SQL, APIs, Git, Web/Mobile/Backend. Explain code, write readable code, debug, design APIs
+5. Writing: Emails, captions, essays, stories, bios, ads. Adapt tone professional/friendly/funny/romantic/formal/casual
+6. Translation: Translate, correct grammar, explain vocabulary
+7. Creative Ideas: Businesses, Apps, YouTube, TikTok, names, logos
+8. Research: Use knowledge, be accurate, distinguish facts/estimates/opinions
+9. Problem Solving: Understand objective, identify constraints, break into steps, solve, check
+10. Safety: Do not help harm, do not provide dangerous/illegal instructions
+11. Privacy: Protect user info, never request passwords/private keys unnecessarily
+12. Accuracy: Never invent facts, say when you don't know
+13. Response Style: Start with answer, simple language, use headings/bullets for long answers, match user's style
+
+MAIN GOAL: Help user Understand → Create → Solve → Learn → Build → Improve. Always provide most useful next step.
+
+You are First Meta Pro version 2.0, built by Andrea.`;
+
+let msgs = JSON.parse(localStorage.getItem('chat_hist_v2') || '[]');
+if(msgs.length===0) msgs=[{role:'system',content:SYSTEM_PROMPT}];
+const chatDiv=document.getElementById('chat');
 function save(){
  let k=document.getElementById('keyIn').value.trim();
- if(!k.startsWith('gsk_')){ alert('Must start gsk_'); return; }
+ if(!k.startsWith('gsk_')){ alert('Key must start gsk_'); return; }
  localStorage.setItem('groq_key',k); key=k;
  document.getElementById('setup').style.display='none';
- add('bot','🧠 ACTIVE! Ask me!');
+ add('bot','🧠 First Meta Pro ACTIVE!\n\nI can now:\n• Solve Math step-by-step\n• Write code (Python, JS, HTML)\n• Write emails, captions, stories\n• Translate languages\n• Build apps & debug\n• Research & explain\n\nTry me! Ask anything.');
 }
 function add(role,t){
  let d=document.createElement('div'); d.className='bubble '+role; d.textContent=t;
  chatDiv.appendChild(d); chatDiv.scrollTop=999999; return d;
 }
-function quick(t){ document.getElementById('msg').value=t; send(); }
-function clearChat(){ if(confirm('Clear chat?')){ localStorage.removeItem('chat_hist'); msgs=msgs.slice(0,1); chatDiv.innerHTML='<div class=bubble bot>Hello Andrea! Fresh start! 👋</div>'; } }
+function clearChat(){ if(confirm('Clear?')){ msgs=[{role:'system',content:SYSTEM_PROMPT}]; localStorage.setItem('chat_hist_v2',JSON.stringify(msgs)); chatDiv.innerHTML=''; add('bot','Fresh start! I am First Meta Pro ready to help you Understand → Create → Solve → Learn → Build → Improve!'); } }
 function downloadChat(){
- let text = msgs.map(m=>m.role+': '+m.content).join('\n\n');
- let blob = new Blob([text],{type:'text/plain'});
- let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='FirstMeta-chat.txt'; a.click();
+ let text = msgs.filter(m=>m.role!=='system').map(m=>m.role+': '+m.content).join('\n\n');
+ let blob = new Blob([text],{type:'text/plain'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='FirstMeta-Pro-chat.txt'; a.click();
 }
 async function send(){
  let q=document.getElementById('msg').value.trim(); if(!q)return;
- if(!key &&!q.startsWith('gsk_')){ document.getElementById('setup').style.display='flex'; if(q.startsWith('gsk_')){ document.getElementById('keyIn').value=q; save(); document.getElementById('msg').value=''; return; } return; }
+ if(!key){ if(q.startsWith('gsk_')){ document.getElementById('keyIn').value=q; save(); document.getElementById('msg').value=''; return; } document.getElementById('setup').style.display='flex'; return; }
  if(q.startsWith('gsk_')){ document.getElementById('keyIn').value=q; save(); document.getElementById('msg').value=''; return; }
  add('user',q); document.getElementById('msg').value='';
- // Image gen
- if(q.toLowerCase().startsWith('draw') || q.toLowerCase().includes('image') || q.toLowerCase().includes('generate')){
-   let b=add('bot','🎨 Drawing...\n');
-   let img=document.createElement('img'); img.style.width='100%'; img.style.borderRadius='12px'; img.style.marginTop='8px';
-   img.src='https://image.pollinations.ai/prompt/'+encodeURIComponent(q.replace(/draw/i,''))+'?nologo=true';
-   b.appendChild(img); msgs.push({role:'user',content:q}); localStorage.setItem('chat_hist',JSON.stringify(msgs)); return;
+ if(q.toLowerCase().startsWith('draw') || q.toLowerCase().includes('generate image')){
+   let b=add('bot','🎨 Generating image...\n'); let img=document.createElement('img'); img.style.width='100%'; img.style.borderRadius='12px'; img.style.marginTop='8px';
+   img.src='https://image.pollinations.ai/prompt/'+encodeURIComponent(q.replace(/draw/i,''))+'?nologo=true'; b.appendChild(img); msgs.push({role:'user',content:q}); localStorage.setItem('chat_hist_v2',JSON.stringify(msgs)); return;
  }
- msgs.push({role:'user',content:q}); localStorage.setItem('chat_hist',JSON.stringify(msgs));
+ msgs.push({role:'user',content:q}); localStorage.setItem('chat_hist_v2',JSON.stringify(msgs));
  let b=add('bot','Thinking...');
  for(let m of ['llama-3.3-70b-versatile','openai/gpt-oss-20b','llama3-8b-8192']){
   try{
-   let r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model:m,messages:msgs,max_tokens:800})});
+   let r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model:m,messages:msgs,max_tokens:1000,temperature:0.7})});
    let d=await r.json();
-   if(d.choices){ b.textContent=d.choices[0].message.content; msgs.push({role:'assistant',content:d.choices[0].message.content}); localStorage.setItem('chat_hist',JSON.stringify(msgs)); return; }
+   if(d.choices){ b.textContent=d.choices[0].message.content; msgs.push({role:'assistant',content:d.choices[0].message.content}); localStorage.setItem('chat_hist_v2',JSON.stringify(msgs)); return; }
   }catch(e){}
  }
- b.textContent='Error - check API key at console.groq.com';
+ b.textContent='Error - check API key. Get new one at console.groq.com';
 }
-function startVoice(){
- let rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
- rec.lang='en-KE'; rec.onresult=e=>{ document.getElementById('msg').value=e.results[0][0].transcript; send(); }; rec.start();
-}
-// Load history
-window.onload=()=>{ msgs.slice(1).forEach(m=>{ if(m.role!=='system') add(m.role,m.content); }); if(!key) document.getElementById('setup').style.display='flex'; };
+window.onload=()=>{
+ msgs.filter(m=>m.role!=='system').forEach(m=> add(m.role,m.content));
+ if(msgs.length===1) add('bot','🇰🇪 Hello! I am First Meta Pro by Andrea!\n\nYour AI Assistant Capabilities:\n✓ Math, Science, Programming\n✓ Writing & Translation\n✓ Coding Projects & Debugging\n✓ Creative Ideas & Business\n✓ Research & Problem Solving\n\nGoal: Help you Understand → Create → Solve → Learn → Build → Improve!\n\nPaste your Groq key (🔑 top right) to start!');
+ if(!key) document.getElementById('setup').style.display='flex';
+};
 </script>
 </body>
 </html>
