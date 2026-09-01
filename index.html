@@ -1,120 +1,170 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>First Meta by Andrea - Pro AI</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRmlyc3QgTWV0YSBieSBBbmRyZWEiLCJzaG9ydF9uYW1lIjoiRmlyc3QgTWV0YSIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMjEyMTIxIiwidGhlbWVfY29sb3IiOiIjMTljMzdkIn0=">
+<title>Nova AI by Andrea - Kisumu</title>
 <style>
-body{background:#212121;color:white;font-family:sans-serif;display:flex;flex-direction:column;height:100vh;margin:0}
-.top{padding:10px 14px;background:#171717;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #333}
-.keybtn{background:#19c37d;color:white;border:none;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:bold;cursor:pointer}
-.small{font-size:11px;padding:5px 8px;background:#333}
-#chat{flex:1;overflow:auto;padding:20px;padding-bottom:110px}
-.bubble{margin:10px 0;padding:12px 16px;border-radius:16px;max-width:88%;white-space:pre-wrap;word-break:break-word;line-height:1.6;font-size:14px}
-.user{background:#2f2f2f;align-self:flex-end;margin-left:40px}
-.bot{background:#343541;align-self:flex-start;margin-right:40px;border:1px solid #444}
-.bar{position:fixed;bottom:0;left:0;right:0;background:#171717;padding:10px;display:flex;gap:8px;border-top:1px solid #333}
-input{flex:1;padding:12px;border-radius:20px;border:none;background:#2f2f2f;color:white;outline:none}
-button.send{padding:12px 18px;border-radius:20px;border:none;background:#19c37d;color:white;font-weight:bold;cursor:pointer}
-#setup{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999;display:none}
-.box{background:#2f2f2f;padding:20px;border-radius:16px;width:100%;max-width:380px;text-align:center}
-.box input{width:100%;margin:12px 0;padding:14px;box-sizing:border-box;border-radius:10px;border:1px solid #555;background:#171717;color:white}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+body { background: #0b0b0f; color: white; height: 100vh; overflow: hidden; }
+.app { height: 100vh; display: flex; flex-direction: column; }
+header { height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid #24242b; background: #111116; }
+.logo { display: flex; align-items: center; gap: 10px; font-size: 21px; font-weight: bold; }
+.logo-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #7c3aed, #06b6d4); font-size: 20px; }
+.new-chat { border: none; background: #24242d; color: white; padding: 10px 15px; border-radius: 10px; cursor: pointer; }
+#chat { flex: 1; overflow-y: auto; padding: 25px; padding-bottom: 100px; }
+.welcome { max-width: 850px; margin: 70px auto 30px; text-align: center; }
+.welcome h1 { font-size: 38px; margin-bottom: 15px; }
+.welcome p { color: #aaa; font-size: 16px; line-height: 1.6; }
+.features { max-width: 850px; margin: 30px auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.feature { background: #15151b; border: 1px solid #25252d; padding: 18px; border-radius: 14px; cursor: pointer; transition: 0.2s; }
+.feature:hover { background: #1d1d25; transform: translateY(-2px); }
+.feature strong { display: block; margin-bottom: 6px; }
+.feature span { color: #999; font-size: 13px; }
+.message { max-width: 850px; margin: 15px auto; display: flex; }
+.message.user { justify-content: flex-end; }
+.bubble { max-width: 75%; padding: 13px 16px; border-radius: 16px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+.user.bubble { background: #6d28d9; }
+.assistant.bubble { background: #19191f; border: 1px solid #292931; }
+.input-area { padding: 15px; background: #0b0b0f; border-top: 1px solid #24242b; position: fixed; bottom: 0; left: 0; right: 0; }
+.input-box { max-width: 850px; margin: auto; display: flex; align-items: center; gap: 10px; background: #17171d; border: 1px solid #303039; padding: 8px; border-radius: 18px; }
+textarea { flex: 1; resize: none; border: none; outline: none; background: transparent; color: white; padding: 10px; min-height: 42px; max-height: 120px; font-size: 15px; }
+button { border: none; cursor: pointer; }
+.send { width: 42px; height: 42px; border-radius: 12px; background: #7c3aed; color: white; font-size: 18px; }
+.tools { max-width: 850px; margin: 8px auto 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.tool { background: transparent; color: #aaa; border: 1px solid #292931; padding: 7px 11px; border-radius: 9px; cursor: pointer; font-size: 12px; }
+#keySetup{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.keyBox{background:#15151b;border:1px solid #333;padding:24px;border-radius:16px;max-width:360px;width:100%;text-align:center}
+.keyBox input{width:100%;padding:12px;margin:12px 0;border-radius:10px;border:1px solid #444;background:#0b0b0f;color:white}
+@media (max-width: 600px) {.welcome h1 { font-size: 29px; }.features { grid-template-columns: 1fr; }.bubble { max-width: 90%; } #chat { padding: 15px; } }
 </style>
 </head>
 <body>
-<div class="top">
-<b>🇰🇪 First Meta Pro</b>
-<div>
-<button class="keybtn small" onclick="clearChat()">🗑️ Clear</button>
-<button class="keybtn small" onclick="downloadChat()">⬇️ Save</button>
-<button class="keybtn" onclick="document.getElementById('setup').style.display='flex'">🔑 Key</button>
-</div>
-</div>
-<div id="setup">
-<div class="box">
-<h3>🔑 Activate Pro Brain</h3>
-<p style="font-size:12px;color:#aaa">Paste Groq key from console.groq.com</p>
+<div id="keySetup">
+<div class="keyBox">
+<div style="font-size:30px">🔑</div>
+<h3 style="margin:10px 0">Activate Nova AI</h3>
+<p style="color:#aaa;font-size:13px">Paste your FREE Groq API key from console.groq.com</p>
 <input id="keyIn" placeholder="gsk_...">
-<button class="send" style="width:100%" onclick="save()">Activate Pro 🧠</button>
+<button class="send" style="width:100%;height:auto;padding:12px" onclick="saveKey()">Activate Brain 🧠</button>
+<p style="color:#666;font-size:11px;margin-top:10px">FREE - No payment needed</p>
 </div>
 </div>
-<div id="chat"></div>
-<div class="bar">
-<input id="msg" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')send()">
-<button class="send" onclick="send()">Send</button>
+<div class="app">
+<header>
+<div class="logo"><div class="logo-icon">✦</div> Nova AI by Andrea</div>
+<div style="display:flex;gap:8px">
+<button class="new-chat" onclick="downloadChat()">⬇️ Save</button>
+<button class="new-chat" onclick="newChat()">+ New Chat</button>
+<button class="new-chat" style="background:#7c3aed" onclick="document.getElementById('keySetup').style.display='flex'">🔑 Key</button>
+</div>
+</header>
+<main id="chat">
+<div id="welcome" class="welcome">
+<h1>What can I help you create?</h1>
+<p>I'm Nova AI — your creative AI assistant built by Andrea from Kisumu 🇰🇪 for conversations, ideas, images, videos, scripts, social media and coding.</p>
+<div class="features">
+<div class="feature" onclick="usePrompt('Create a viral short-video idea for TikTok about life in Kisumu')">🎬<strong>Video Ideas</strong><span>Create engaging short-video concepts and scripts.</span></div>
+<div class="feature" onclick="usePrompt('Draw a cinematic image of Lake Victoria sunset')">🖼️<strong>Images</strong><span>Generate images - type Draw sunset</span></div>
+<div class="feature" onclick="usePrompt('Give me 10 TikTok content ideas for my business')">📱<strong>Social Media</strong><span>Generate content ideas, captions and hooks.</span></div>
+<div class="feature" onclick="usePrompt('Help me build a website with HTML CSS')">💻<strong>Build & Code</strong><span>Build websites, apps and software.</span></div>
+</div>
+</div>
+</main>
+<div class="input-area">
+<div class="input-box">
+<textarea id="messageInput" placeholder="Message Nova AI..." rows="1" onkeydown="handleKey(event)"></textarea>
+<button class="send" onclick="sendMessage()">↑</button>
+</div>
+<div class="tools">
+<button class="tool" onclick="usePrompt('Draw an image of ')">🖼️ Image</button>
+<button class="tool" onclick="usePrompt('Create a short video concept about ')">🎬 Video</button>
+<button class="tool" onclick="usePrompt('Write a viral social media caption about ')">✍️ Caption</button>
+<button class="tool" onclick="usePrompt('Write a video script about ')">🎥 Script</button>
+<button class="tool" onclick="usePrompt('Solve this math step by step: ')">🧮 Math</button>
+</div>
+<div class="status" style="text-align:center;color:#666;font-size:11px;margin-top:8px">Nova AI by Andrea • Kisumu, Kenya • Can make mistakes. Check important info.</div>
+</div>
 </div>
 <script>
-let key = localStorage.getItem('groq_key') || '';
-const SYSTEM_PROMPT = `You are First Meta, an intelligent, helpful, friendly AI assistant built by Andrea from Kisumu, Kenya.
-
-CORE IDENTITY:
-- Helpful, Clear, Respectful, Honest, Patient, Context-aware
-- Concise when short answer is enough, Detailed when explanation needed
-- Never pretend to have done something you have not done
-
-CAPABILITIES:
-1. General: Answer questions, explain concepts, brainstorm, summarize, compare, decide
-2. Education: Math, Physics, Chemistry, Biology, CS, Programming, History, Geography, Languages, Business. Break hard problems into steps with examples
-3. Mathematics: Arithmetic to Calculus, always check calculations
-4. Programming: Python, JS, TS, HTML, CSS, Java, C/C++, PHP, SQL, APIs, Git, Web/Mobile/Backend. Explain code, write readable code, debug, design APIs
-5. Writing: Emails, captions, essays, stories, bios, ads. Adapt tone professional/friendly/funny/romantic/formal/casual
-6. Translation: Translate, correct grammar, explain vocabulary
-7. Creative Ideas: Businesses, Apps, YouTube, TikTok, names, logos
-8. Research: Use knowledge, be accurate, distinguish facts/estimates/opinions
-9. Problem Solving: Understand objective, identify constraints, break into steps, solve, check
-10. Safety: Do not help harm, do not provide dangerous/illegal instructions
-11. Privacy: Protect user info, never request passwords/private keys unnecessarily
-12. Accuracy: Never invent facts, say when you don't know
-13. Response Style: Start with answer, simple language, use headings/bullets for long answers, match user's style
-
-MAIN GOAL: Help user Understand → Create → Solve → Learn → Build → Improve. Always provide most useful next step.
-
-You are First Meta Pro version 2.0, built by Andrea.`;
-
-let msgs = JSON.parse(localStorage.getItem('chat_hist_v2') || '[]');
-if(msgs.length===0) msgs=[{role:'system',content:SYSTEM_PROMPT}];
-const chatDiv=document.getElementById('chat');
-function save(){
+let groqKey = localStorage.getItem('groq_key') || '';
+const chat = document.getElementById("chat");
+const input = document.getElementById("messageInput");
+const SYSTEM = You are Nova AI, built by Andrea from Kisumu, Kenya. You are helpful, clear, respectful, honest, patient, concise when short answer enough, detailed when needed. You can: answer questions, explain concepts, help learn Math/Physics/Chem/Biology/CS/Programming, write code Python/JS/HTML/CSS, write emails/captions/stories, translate, brainstorm business/app/YouTube ideas, social media content. For education break problems into steps with examples. For math check calculations. For coding make readable and explain. Main goal: Help user Understand → Create → Solve → Learn → Build → Improve.;
+let history = JSON.parse(localStorage.getItem('nova_hist')||'[]');
+if(history.length===0) history=[{role:'system',content:SYSTEM}];
+if(groqKey) document.getElementById('keySetup').style.display='none';
+function saveKey(){
  let k=document.getElementById('keyIn').value.trim();
- if(!k.startsWith('gsk_')){ alert('Key must start gsk_'); return; }
- localStorage.setItem('groq_key',k); key=k;
- document.getElementById('setup').style.display='none';
- add('bot','🧠 First Meta Pro ACTIVE!\n\nI can now:\n• Solve Math step-by-step\n• Write code (Python, JS, HTML)\n• Write emails, captions, stories\n• Translate languages\n• Build apps & debug\n• Research & explain\n\nTry me! Ask anything.');
+ if(!k.startsWith('gsk_')){alert('Key must start with gsk_');return;}
+ localStorage.setItem('groq_key',k); groqKey=k;
+ document.getElementById('keySetup').style.display='none';
+ addMessage('🧠 Nova AI Pro ACTIVE! Free forever! Ask me anything - math, code, images, videos, captions!','assistant');
 }
-function add(role,t){
- let d=document.createElement('div'); d.className='bubble '+role; d.textContent=t;
- chatDiv.appendChild(d); chatDiv.scrollTop=999999; return d;
+function usePrompt(text) { input.value = text; input.focus(); }
+function handleKey(e){ if(e.key==="Enter" &&!e.shiftKey){ e.preventDefault(); sendMessage(); } }
+function addMessage(text, type){
+ const welcome=document.getElementById("welcome"); if(welcome) welcome.remove();
+ const msgDiv=document.createElement("div"); msgDiv.className="message "+type;
+ const bub=document.createElement("div"); bub.className="bubble";
+ if(type==='assistant' && text.includes('https://image.pollinations.ai')){
+   bub.innerHTML=text;
+ } else {
+   bub.textContent=text;
+ }
+ msgDiv.appendChild(bub); chat.appendChild(msgDiv); chat.scrollTop=chat.scrollHeight;
+ return bub;
 }
-function clearChat(){ if(confirm('Clear?')){ msgs=[{role:'system',content:SYSTEM_PROMPT}]; localStorage.setItem('chat_hist_v2',JSON.stringify(msgs)); chatDiv.innerHTML=''; add('bot','Fresh start! I am First Meta Pro ready to help you Understand → Create → Solve → Learn → Build → Improve!'); } }
+async function sendMessage(){
+ const message = input.value.trim(); if(!message) return;
+ if(!groqKey){ if(message.startsWith('gsk_')){document.getElementById('keyIn').value=message; saveKey(); input.value=''; return;} document.getElementById('keySetup').style.display='flex'; return; }
+ if(message.startsWith('gsk_')){document.getElementById('keyIn').value=message; saveKey(); input.value=''; return;}
+ addMessage(message,"user"); input.value="";
+ // Image generation free
+ if(message.toLowerCase().startsWith('draw') || message.toLowerCase().includes('generate image') || message.toLowerCase().includes('create an image')){
+   const thinking=addMessage("🎨 Generating image...","assistant");
+   const prompt=message.replace(/draw|generate image|create an image/gi,'').trim();
+   const imgUrl=`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true&width=512&height=512`;
+   thinking.innerHTML=`🎨 Here is your image for: <b>${prompt}</b><br><br><img src="${imgUrl}" style="width:100%;border-radius:12px" onload="document.getElementById('chat').scrollTop=999999">`;
+   history.push({role:'user',content:message}); localStorage.setItem('nova_hist',JSON.stringify(history)); return;
+ }
+ history.push({role:'user',content:message}); localStorage.setItem('nova_hist',JSON.stringify(history));
+ const thinkingBubble=addMessage("Thinking...","assistant");
+ try{
+   const models=['llama-3.3-70b-versatile','openai/gpt-oss-20b','llama3-8b-8192'];
+   let replied=false;
+   for(let model of models){
+     try{
+       const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
+         method:"POST",
+         headers:{"Authorization":"Bearer "+groqKey,"Content-Type":"application/json"},
+         body:JSON.stringify({model:model,messages:history,max_tokens:1200,temperature:0.7})
+       });
+       const data=await res.json();
+       if(data.choices && data.choices[0].message){
+         const reply=data.choices[0].message.content;
+         thinkingBubble.textContent=reply;
+         history.push({role:'assistant',content:reply}); localStorage.setItem('nova_hist',JSON.stringify(history));
+         replied=true; break;
+       }
+     }catch(e){}
+   }
+   if(!replied) thinkingBubble.textContent="Error - check API key at console.groq.com or try new key.";
+ }catch(err){ thinkingBubble.textContent="Backend error. Check your Groq key."; console.error(err); }
+}
+function newChat(){
+ history=[{role:'system',content:SYSTEM}]; localStorage.setItem('nova_hist',JSON.stringify(history));
+ chat.innerHTML=`<div id="welcome" class="welcome"><h1>What can I help you create?</h1><p>I'm Nova AI — built by Andrea from Kisumu 🇰🇪</p><div class="features"><div class="feature" onclick="usePrompt('Create a viral short-video idea')"><strong>🎬 Video Ideas</strong></div><div class="feature" onclick="usePrompt('Draw a cinematic scene of ')"><strong>🖼️ Images</strong></div><div class="feature" onclick="usePrompt('Give me social media ideas')"><strong>📱 Social</strong></div><div class="feature" onclick="usePrompt('Help me code ')"><strong>💻 Code</strong></div></div></div>`;
+}
 function downloadChat(){
- let text = msgs.filter(m=>m.role!=='system').map(m=>m.role+': '+m.content).join('\n\n');
- let blob = new Blob([text],{type:'text/plain'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='FirstMeta-Pro-chat.txt'; a.click();
-}
-async function send(){
- let q=document.getElementById('msg').value.trim(); if(!q)return;
- if(!key){ if(q.startsWith('gsk_')){ document.getElementById('keyIn').value=q; save(); document.getElementById('msg').value=''; return; } document.getElementById('setup').style.display='flex'; return; }
- if(q.startsWith('gsk_')){ document.getElementById('keyIn').value=q; save(); document.getElementById('msg').value=''; return; }
- add('user',q); document.getElementById('msg').value='';
- if(q.toLowerCase().startsWith('draw') || q.toLowerCase().includes('generate image')){
-   let b=add('bot','🎨 Generating image...\n'); let img=document.createElement('img'); img.style.width='100%'; img.style.borderRadius='12px'; img.style.marginTop='8px';
-   img.src='https://image.pollinations.ai/prompt/'+encodeURIComponent(q.replace(/draw/i,''))+'?nologo=true'; b.appendChild(img); msgs.push({role:'user',content:q}); localStorage.setItem('chat_hist_v2',JSON.stringify(msgs)); return;
- }
- msgs.push({role:'user',content:q}); localStorage.setItem('chat_hist_v2',JSON.stringify(msgs));
- let b=add('bot','Thinking...');
- for(let m of ['llama-3.3-70b-versatile','openai/gpt-oss-20b','llama3-8b-8192']){
-  try{
-   let r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model:m,messages:msgs,max_tokens:1000,temperature:0.7})});
-   let d=await r.json();
-   if(d.choices){ b.textContent=d.choices[0].message.content; msgs.push({role:'assistant',content:d.choices[0].message.content}); localStorage.setItem('chat_hist_v2',JSON.stringify(msgs)); return; }
-  }catch(e){}
- }
- b.textContent='Error - check API key. Get new one at console.groq.com';
+ let text=history.filter(m=>m.role!=='system').map(m=>m.role+': '+m.content).join('\n\n');
+ let blob=new Blob([text],{type:'text/plain'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='NovaAI-chat.txt'; a.click();
 }
 window.onload=()=>{
- msgs.filter(m=>m.role!=='system').forEach(m=> add(m.role,m.content));
- if(msgs.length===1) add('bot','🇰🇪 Hello! I am First Meta Pro by Andrea!\n\nYour AI Assistant Capabilities:\n✓ Math, Science, Programming\n✓ Writing & Translation\n✓ Coding Projects & Debugging\n✓ Creative Ideas & Business\n✓ Research & Problem Solving\n\nGoal: Help you Understand → Create → Solve → Learn → Build → Improve!\n\nPaste your Groq key (🔑 top right) to start!');
- if(!key) document.getElementById('setup').style.display='flex';
+ if(history.length>1){
+   const welcome=document.getElementById("welcome"); if(welcome) welcome.remove();
+   history.forEach(m=>{ if(m.role!=='system') addMessage(m.content,m.role==='user'?'user':'assistant'); });
+ }
 };
 </script>
 </body>
